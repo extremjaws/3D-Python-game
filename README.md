@@ -1,4 +1,4 @@
-# 3D Python game
+# Not Minecraft in python
  
 requires ursina
 
