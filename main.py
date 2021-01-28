@@ -2,18 +2,15 @@ from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 
 window.vsync = False
-lowres = input("Lowres?[y,n]")
 app = Ursina()
-if lowres == "n":
-    wood = load_texture("assets/oak_planks.png")
-    stone = load_texture("assets/stone.png")
-    glass = load_texture("assets/glass.png")
-    grass = load_texture("assets/grass_block_top.png")
-else:
-    wood = load_texture("assets/low_oak_planks.png")
-    stone = load_texture("assets/low_stone.png")
-    glass = load_texture("assets/low_glass.png")
-    grass = load_texture("assets/low_grass_block_top.png")
+wood = load_texture("assets/oak_planks.png")
+stone = load_texture("assets/stone.png")
+glass = load_texture("assets/glass.png")
+grass = load_texture("assets/grass_block_top.png")
+wood.filtering = None
+stone.filtering = None
+glass.filtering = None
+grass.filtering = None
 
 window.exit_button.visible = False
 window.fullscreen = True
