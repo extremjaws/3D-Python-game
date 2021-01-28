@@ -7,6 +7,9 @@ wood = load_texture("oak_planks.png")
 stone = load_texture("stone.png")
 glass = load_texture("glass.png")
 
+window.exit_button.visible = False
+window.fullscreen = True
+
 item = 1
 
 def update():
