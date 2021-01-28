@@ -6,4 +6,4 @@ pip install ursina
 
 use SHIFT+Q to quit
 
-1-3 for blocks
+1-4 for blocks
