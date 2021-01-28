@@ -42,12 +42,12 @@ class Voxel(Button):
 class Player(FirstPersonController):
     def __init__(self):
         super().__init__(jump_height=1)
+        self.camera_pivot.y -= 0.25
 
 for z in range(20):
     for x in range(20):
         voxel = Voxel(position = (x,0,z))
 
 player = Player()
-player.camera_pivot.y -= 0.25
 
 app.run()
