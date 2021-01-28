@@ -7,10 +7,13 @@ wood = load_texture("assets/oak_planks.png")
 stone = load_texture("assets/stone.png")
 glass = load_texture("assets/glass.png")
 grass = load_texture("assets/grass_block_top.png")
+ctable = load_texture("assets/crafting_table.png")
+e = False
 wood.filtering = None
 stone.filtering = None
 glass.filtering = None
 grass.filtering = None
+ctable.filtering = None
 
 window.exit_button.visible = False
 window.fullscreen = True
@@ -23,13 +26,14 @@ def update():
     if held_keys['2']: item = 2
     if held_keys['3']: item = 3
     if held_keys['4']: item = 4
+    if held_keys['5']: item = 5
 
 class Voxel(Button):
-    def __init__(self, position = (0,0,0), texture = wood, color=color.white):
+    def __init__(self, position = (0,0,0), texture = wood, color=color.white, model='cube'):
         super().__init__(
             parent = scene,
             position = position,
-            model = 'cube',
+            model = model,
             origin_y = 0.5,
             texture = texture,
             color = color
@@ -46,6 +50,8 @@ class Voxel(Button):
                     voxel = Voxel(position = self.position+mouse.normal, texture=glass)
                 if item == 4:
                     voxel = Voxel(position = self.position+mouse.normal, texture=grass, color=color.green)
+                if item == 5:
+                    voxel = Voxel(position = self.position+mouse.normal, texture=ctable, model='assets/block.obj')
             if key == 'left mouse down':
                 destroy(self)
 
