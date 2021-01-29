@@ -9,7 +9,7 @@ glass = load_texture("assets/glass.png")
 grass = load_texture("assets/grass_block_top.png")
 ctable = load_texture("assets/crafting_table.png")
 door = load_texture("assets/door.png")
-customtexture = load_texture('assets/oak_planks.png')
+bed = load_texture("assets/red.png")
 e = True
 wood.filtering = None
 stone.filtering = None
@@ -17,6 +17,7 @@ glass.filtering = None
 grass.filtering = None
 ctable.filtering = None
 door.filtering = None
+bed.filtering = None
 
 window.exit_button.visible = False
 window.fullscreen = True
@@ -32,9 +33,10 @@ def update():
     if held_keys['5']: item = 5
     if held_keys['6']: item = 6
     if held_keys['7']: item = 7
+    if held_keys['8']: item = 8
 
 class Voxel(Button):
-    def __init__(self, position = (0,0,0), texture = wood, color=color.white, model='cube', door = False, painting = False):
+    def __init__(self, position = (0,0,0), texture = wood, color=color.white, model='cube', door = False, painting = False,MeshCollide=False):
         super().__init__(
             parent = scene,
             position = position,
@@ -44,11 +46,10 @@ class Voxel(Button):
             color = color
         )
         self.door = door
-        if door:
+        if MeshCollide:
+            self.collider = MeshCollider(self)
+            self.model = load_model(model)
             self.y -= 1
-            self.collider = MeshCollider(self)
-        if painting:
-            self.collider = MeshCollider(self)
         self.open = False
         self.painting = painting
     
@@ -66,9 +67,11 @@ class Voxel(Button):
                 if item == 5:
                     voxel = Voxel(position = self.position+mouse.normal, texture=ctable, model='assets/block.obj')
                 if item == 6:
-                    voxel = Voxel(position = self.position+mouse.normal, texture=door, model='assets/door.obj',door=True)
+                    voxel = Voxel(position = self.position+mouse.normal, texture=door, model='assets/door.obj',door=True,MeshCollide=True)
                 if item == 7:
-                    voxel = Voxel(position = self.position+mouse.normal, model='assets/painting.obj',painting=True)
+                    voxel = Voxel(position = self.position+mouse.normal, model='assets/painting.obj',painting=True,MeshCollide=True)
+                if item == 8:
+                    voxel = Voxel(position=self.position+mouse.normal, model='assets/bed.obj', texture=bed, MeshCollide=True)
             if key == 'left mouse down':
                 destroy(self)
             if key == 'q':
