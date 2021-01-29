@@ -9,6 +9,7 @@ glass = load_texture("assets/glass.png")
 grass = load_texture("assets/grass_block_top.png")
 ctable = load_texture("assets/crafting_table.png")
 door = load_texture("assets/door.png")
+customtexture = load_texture('assets/oak_planks.png')
 e = True
 wood.filtering = None
 stone.filtering = None
@@ -30,9 +31,10 @@ def update():
     if held_keys['4']: item = 4
     if held_keys['5']: item = 5
     if held_keys['6']: item = 6
+    if held_keys['7']: item = 7
 
 class Voxel(Button):
-    def __init__(self, position = (0,0,0), texture = wood, color=color.white, model='cube', door = False):
+    def __init__(self, position = (0,0,0), texture = wood, color=color.white, model='cube', door = False, painting = False):
         super().__init__(
             parent = scene,
             position = position,
@@ -45,7 +47,10 @@ class Voxel(Button):
         if door:
             self.y -= 1
             self.collider = MeshCollider(self)
+        if painting:
+            self.collider = MeshCollider(self)
         self.open = False
+        self.painting = painting
     
     def input(self,key):
         if self.hovered:
@@ -62,18 +67,23 @@ class Voxel(Button):
                     voxel = Voxel(position = self.position+mouse.normal, texture=ctable, model='assets/block.obj')
                 if item == 6:
                     voxel = Voxel(position = self.position+mouse.normal, texture=door, model='assets/door.obj',door=True)
+                if item == 7:
+                    voxel = Voxel(position = self.position+mouse.normal, model='assets/painting.obj',painting=True)
             if key == 'left mouse down':
                 destroy(self)
             if key == 'q':
                 self.rotation_y += 90
-            if key == 'e' and self.door:
-                if self.open:
-                    self.model = load_model('assets/door.obj')
-                    self.open = False
-                else:
-                    self.model = load_model('assets/open_door.obj')
-                    self.open = True
-                self.collider = MeshCollider(self)
+            if key == 'e':
+                if self.door:
+                    if self.open:
+                        self.model = load_model('assets/door.obj')
+                        self.open = False
+                    else:
+                        self.model = load_model('assets/open_door.obj')
+                        self.open = True
+                    self.collider = MeshCollider(self)
+                if self.painting:
+                    self.texture = load_texture(input("image?"))
 
 class Player(FirstPersonController):
     def __init__(self):
