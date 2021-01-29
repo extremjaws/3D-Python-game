@@ -83,7 +83,7 @@ class Voxel(Button):
                         self.open = True
                     self.collider = MeshCollider(self)
                 if self.painting:
-                    self.texture = load_texture(input("image?"))
+                    self.texture = load_texture("paintings/"+input("image?"))
                     self.texture.filtering = None
 
 class Player(FirstPersonController):
