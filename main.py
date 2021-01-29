@@ -11,6 +11,7 @@ grass = load_texture("assets/grass_block_top.png")
 ctable = load_texture("assets/crafting_table.png")
 door = load_texture("assets/door.png")
 bed = load_texture("assets/red.png")
+jukebox = load_texture("assets/jukebox.png")
 e = True
 wood.filtering = None
 stone.filtering = None
@@ -19,8 +20,8 @@ grass.filtering = None
 ctable.filtering = None
 door.filtering = None
 bed.filtering = None
+jukebox.filtering = None
 breakblock = Audio('assets/stone1.ogg',autoplay=False,Loop=False)
-music = Audio('assets/music/creative1.ogg',autoplay=True,Loop=False)
 
 window.exit_button.visible = False
 window.fullscreen = True
@@ -38,11 +39,10 @@ def update():
     if held_keys['6']: item = 6
     if held_keys['7']: item = 7
     if held_keys['8']: item = 8
-    if not music.playing:
-        music = Audio('assets/music/creative'+str(random.randint(1,6))+'.ogg',autoplay=True,Loop=False)
+    if held_keys['9']: item = 9
 
 class Voxel(Button):
-    def __init__(self, position = (0,0,0), texture = wood, color=color.white, model='cube', door = False, painting = False,MeshCollide=False):
+    def __init__(self, position = (0,0,0), texture = wood, color=color.white, model='cube', door = False, painting = False,MeshCollide=False,music=False):
         super().__init__(
             parent = scene,
             position = position,
@@ -59,6 +59,7 @@ class Voxel(Button):
         self.open = False
         self.painting = painting
         self.slab = False
+        self.music = music
     
     def input(self,key):
         if self.hovered:
@@ -79,6 +80,8 @@ class Voxel(Button):
                     voxel = Voxel(position = self.position+mouse.normal, model='assets/painting.obj',painting=True,MeshCollide=True)
                 if item == 8:
                     voxel = Voxel(position=self.position+mouse.normal, model='assets/bed.obj', texture=bed, MeshCollide=True)
+                if item == 9:
+                    voxel = Voxel(position = self.position+mouse.normal, texture=jukebox, model='assets/block.obj', music=True)
             if key == 'left mouse down':
                 breakblock.play()
                 destroy(self)
@@ -96,6 +99,8 @@ class Voxel(Button):
                 if self.painting:
                     self.texture = load_texture("paintings/"+input("image?"))
                     self.texture.filtering = None
+                if self.music:
+                    music = Audio('music/'+input("song?")+'.ogg',autoplay=True,Loop=False)
             if key == 'p':
                 if not self.slab:
                     self.scale = (1,0.5,1)
