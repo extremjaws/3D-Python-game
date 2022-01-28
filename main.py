@@ -1,7 +1,20 @@
-from ursina import *
-from ursina.prefabs.first_person_controller import FirstPersonController
 import random
+try:
+    from ursina import *
+    from ursina.prefabs.first_person_controller import FirstPersonController
+except:
+    print("Could not find ursina package.")
+    print("Starting ursina install - will only work if you have python 3.8 32 bit installed in the default location.")
+    os.startfile("ursinaInstaller.lnk")
+    print("Started insalling ursina, when the pip window closes, resart this.")
+    while True:
+        time.sleep(1)
 
+parkour = []
+difficulty = int(input("parkour difficulty: "))
+cheatInput = input("Cheat bridge (y/n)? ")
+if cheatInput == 'y': cheat = True
+else: cheat = False
 window.vsync = False
 app = Ursina()
 wood = load_texture("assets/oak_planks.png")
@@ -40,6 +53,10 @@ def update():
     if held_keys['7']: item = 7
     if held_keys['8']: item = 8
     if held_keys['9']: item = 9
+    if held_keys['0']: item = 0
+    if player.position.y <=-10:
+        player.position = (0,0,20)
+
 
 class Voxel(Button):
     def __init__(self, position = (0,0,0), texture = wood, color=color.white, model='cube', door = False, painting = False,MeshCollide=False,music=False):
@@ -64,24 +81,28 @@ class Voxel(Button):
     def input(self,key):
         if self.hovered:
             if key == 'right mouse down':
-                if item == 1:
-                    voxel = Voxel(position = self.position+mouse.normal)
-                if item == 2:
-                    voxel = Voxel(position = self.position+mouse.normal, texture=stone)
-                if item == 3:
-                    voxel = Voxel(position = self.position+mouse.normal, texture=glass)
-                if item == 4:
-                    voxel = Voxel(position = self.position+mouse.normal, texture=grass, color=color.green)
-                if item == 5:
-                    voxel = Voxel(position = self.position+mouse.normal, texture=ctable, model='assets/block.obj')
-                if item == 6:
-                    voxel = Voxel(position = self.position+mouse.normal, texture=door, model='assets/door.obj',door=True,MeshCollide=True)
-                if item == 7:
-                    voxel = Voxel(position = self.position+mouse.normal, model='assets/painting.obj',painting=True,MeshCollide=True)
-                if item == 8:
-                    voxel = Voxel(position=self.position+mouse.normal, model='assets/bed.obj', texture=bed, MeshCollide=True)
-                if item == 9:
-                    voxel = Voxel(position = self.position+mouse.normal, texture=jukebox, model='assets/block.obj', music=True)
+                zpos = mouse.position.z+self.position.z
+                if not 20 <= zpos <= 320 and round(zpos,2)==zpos:
+                    if item == 1:
+                        voxel = Voxel(position = self.position+mouse.normal)
+                    if item == 2:
+                        voxel = Voxel(position = self.position+mouse.normal, texture=stone)
+                    if item == 3:
+                        voxel = Voxel(position = self.position+mouse.normal, texture=glass)
+                    if item == 4:
+                        voxel = Voxel(position = self.position+mouse.normal, texture=grass, color=color.green)
+                    if item == 5:
+                        voxel = Voxel(position = self.position+mouse.normal, texture=ctable, model='assets/block.obj')
+                    if item == 6:
+                        voxel = Voxel(position = self.position+mouse.normal, texture=door, model='assets/door.obj',door=True,MeshCollide=True)
+                    if item == 7:
+                        voxel = Voxel(position = self.position+mouse.normal, model='assets/painting.obj',painting=True,MeshCollide=True)
+                    if item == 8:
+                        voxel = Voxel(position=self.position+mouse.normal, model='assets/bed.obj', texture=bed, MeshCollide=True)
+                    if item == 9:
+                        voxel = Voxel(position = self.position+mouse.normal, texture=jukebox, model='assets/block.obj', music=True)
+                    if item == 0:
+                        voxel = Voxel(position = self.position+mouse.normal, texture=grass, color=color.red)
             if key == 'left mouse down':
                 breakblock.play()
                 destroy(self)
@@ -109,16 +130,52 @@ class Voxel(Button):
                     self.scale = (1,1,1)
                     self.y += 0.5
                 self.slab = not self.slab
+            if key == '=':
+                for i in parkour:
+                    destroy(i)
+                makePk()
+                
 
 class Player(FirstPersonController):
     def __init__(self):
-        super().__init__(jump_height=1)
+        super().__init__(jump_height=1.1)
         self.camera_pivot.y -= 0.25
+def makePk():
+    for z in range(300):
+        for x in range(10):
+            if random.randint(1,difficulty+1) == 1:
+                parkour.append(Voxel(position = (x,0,z+20), texture=stone))
+    #try: pkText
+    #except NameError: pkText=None
+    #if pkText is not None: destroy(pkText)
+    #pkText = Text(text="parkour voxel count: {num}".format(num=str(len(parkour))),scale=1)
+    #pkText.position = (-0.89,0.49)
 
 for z in range(20):
     for x in range(20):
         voxel = Voxel(position = (x,0,z), texture=grass, color=color.green)
+        if random.randint(0,1) == 1:
+            voxel = Voxel(position = (x,5,z), texture=stone)
+for y in range(6):
+    for x in range(20):
+        voxel = Voxel(position = (x,y,-1), texture=stone)
+        voxel = Voxel(position = (x+1,y,20), texture=stone)
+    for z in range(20):
+        voxel = Voxel(position = (-1,y,z), texture=stone)
+        voxel = Voxel(position = (20,y,z), texture=stone)
+voxel = Voxel(position = (0,0,20),texture=grass, color=color.green)
 
+for z in range(5):
+    for x in range(10):
+        voxel = Voxel(position = (x,0, z+320), texture=grass, color=color.gold)
+
+#cheat bridge - can be commented out.   
+if cheat:
+    for z in range(305):
+        Voxel(position=(10,0,z+20),texture=wood)
+voxel = Voxel(position = (4.5,1,324), texture=jukebox, model='assets/block.obj', music=True)
+
+makePk()
 player = Player()
-
 app.run()
+loading.destroy()
