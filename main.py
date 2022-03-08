@@ -13,6 +13,9 @@ except:
 parkour = []
 difficulty = int(input("parkour difficulty: "))
 cheatInput = input("Cheat bridge (y/n)? ")
+nbipin = input("No placing in parkour (y/n)? ")
+if nbipin == 'y': nbip = True
+else: nbip = False
 if cheatInput == 'y': cheat = True
 else: cheat = False
 window.vsync = False
@@ -55,8 +58,19 @@ def update():
     if held_keys['9']: item = 9
     if held_keys['0']: item = 0
     if player.position.y <=-10:
-        player.position = (0,0,20)
-
+        player.position = (8.5,1.5,20)
+        player.velocity = 0
+    if held_keys['=']:
+        print("Removing blocks from old parkour...")
+        for i in parkour:
+            destroy(i)
+        makePk()
+    if held_keys['-']:
+        difficulty = int(input("parkour difficulty: "))
+        print("Removing blocks from old parkour...")
+        for i in parkour:
+            destroy(i)
+        makePk()
 
 class Voxel(Button):
     def __init__(self, position = (0,0,0), texture = wood, color=color.white, model='cube', door = False, painting = False,MeshCollide=False,music=False):
@@ -82,7 +96,7 @@ class Voxel(Button):
         if self.hovered:
             if key == 'right mouse down':
                 zpos = mouse.position.z+self.position.z
-                if not 20 <= zpos <= 320 and round(zpos,2)==zpos:
+                if not 20 <= zpos <= 319 and round(zpos,2)==zpos or not nbip:
                     if item == 1:
                         voxel = Voxel(position = self.position+mouse.normal)
                     if item == 2:
@@ -130,10 +144,6 @@ class Voxel(Button):
                     self.scale = (1,1,1)
                     self.y += 0.5
                 self.slab = not self.slab
-            if key == '=':
-                for i in parkour:
-                    destroy(i)
-                makePk()
                 
 
 class Player(FirstPersonController):
@@ -141,10 +151,12 @@ class Player(FirstPersonController):
         super().__init__(jump_height=1.1)
         self.camera_pivot.y -= 0.25
 def makePk():
+    print("Starting generation of new parkour...")
     for z in range(300):
-        for x in range(10):
+        for x in range(20):
             if random.randint(1,difficulty+1) == 1:
-                parkour.append(Voxel(position = (x,0,z+20), texture=stone))
+                parkour.append(Voxel(position = (x,0,z+21), texture=stone))
+    print("Finished generation new parkour")
     #try: pkText
     #except NameError: pkText=None
     #if pkText is not None: destroy(pkText)
@@ -159,21 +171,22 @@ for z in range(20):
 for y in range(6):
     for x in range(20):
         voxel = Voxel(position = (x,y,-1), texture=stone)
-        voxel = Voxel(position = (x+1,y,20), texture=stone)
+        #voxel = Voxel(position = (x+1,y,20), texture=stone)
+        voxel = Voxel(position = (x,0,20),texture=grass, color=color.green)
     for z in range(20):
         voxel = Voxel(position = (-1,y,z), texture=stone)
         voxel = Voxel(position = (20,y,z), texture=stone)
-voxel = Voxel(position = (0,0,20),texture=grass, color=color.green)
+
 
 for z in range(5):
-    for x in range(10):
+    for x in range(20):
         voxel = Voxel(position = (x,0, z+320), texture=grass, color=color.gold)
 
 #cheat bridge - can be commented out.   
 if cheat:
     for z in range(305):
-        Voxel(position=(10,0,z+20),texture=wood)
-voxel = Voxel(position = (4.5,1,324), texture=jukebox, model='assets/block.obj', music=True)
+        Voxel(position=(20,0,z+20),texture=wood)
+voxel = Voxel(position = (10,1,324), texture=jukebox, model='assets/block.obj', music=True)
 
 makePk()
 player = Player()
